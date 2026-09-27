@@ -34,7 +34,7 @@ Quando você assiste a um vídeo, seu status fica assim:
 ## Funcionalidades
 
 - ⏱️ **Timestamp em tempo real** com barra de progresso (tocando / pausado / live)
-- 🖼️ **Thumbnail do vídeo** como imagem grande do RPC, em **moldura quadrada** (letterbox) — o Discord corta imagens não-quadradas, então a thumb é embutida em um quadrado 640×640 para aparecer inteira
+- 🖼️ **Thumbnail do vídeo** como imagem grande do RPC, em **moldura quadrada** (letterbox) — o Discord corta imagens não-quadradas, então o servidor embute a thumb em um quadrado 640×640 via `images.weserv.nl` para aparecer inteira
 - 🔘 **Botão "Assistir no YouTube"** que abre o vídeo exatamente no segundo atual
 - 🧊 Congela o progresso ao pausar, trocar de aba ou durante anúncios
 - 🧹 Limpa o RPC automaticamente quando a última aba de YouTube é fechada
@@ -156,6 +156,7 @@ Você deve ver: `Servidor local ouvindo em http://127.0.0.1:4444` e `Conectado a
 | `clientId` | — | Application ID do seu app no Discord (obrigatório) |
 | `activityName` | `"YouTube"` | Nome que aparece sob o status (é o nome do "jogo") |
 | `credit` | `""` | Texto extra no fim da linha de estado, ex.: `"by @hey-Lyn"` |
+| `squareThumb` | `true` | Embuta a thumbnail em um quadrado 640×640 (letterbox) para o Discord não cortar as laterais |
 | `pipeIndex` | *(auto)* | Força um índice fixo de pipe `discord-ipc-N` (opcional) |
 
 Variáveis de ambiente opcionais: `YT_RPC_PORT`, `YT_RPC_CONFIG`, `YT_RPC_LOG`.

@@ -44,11 +44,6 @@ function isAdPlaying() {
   return !!document.querySelector('.ad-showing, .ytp-ad-player-overlay');
 }
 
-function squareThumbnail(videoId) {
-  const raw = `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`;
-  return `https://images.weserv.nl/?url=${encodeURIComponent(raw)}&w=640&h=640&fit=contain&bg=000000`;
-}
-
 function collect() {
   const videoId = getVideoId();
   if (!videoId) return null;
@@ -73,7 +68,7 @@ function collect() {
     positionMs,
     durationMs,
     paused: video.paused || document.hidden || isAdPlaying(),
-    thumbnailUrl: squareThumbnail(videoId),
+    thumbnailUrl: `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`,
     videoUrl: location.href,
   };
 }

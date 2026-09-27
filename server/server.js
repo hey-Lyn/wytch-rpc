@@ -19,7 +19,7 @@ const RETRY_MS = 5000;
 const PLAYING_TIMEOUT_MS = 5000;
 const CLEAR_TIMEOUT_MS = 15000;
 
-let config = { clientId: '', activityName: 'YouTube', credit: '' };
+let config = { clientId: '', activityName: 'YouTube', credit: '', squareThumb: true };
 
 function log(msg) {
   const ts = new Date().toLocaleTimeString();
@@ -248,7 +248,8 @@ function setActivity(activity) {
     if (sig !== state.lastSig) {
       state.lastSig = sig;
       const btn = activity.buttons && activity.buttons[0] ? activity.buttons[0].url : '';
-      log(`RPC: ${activity.details} | ${activity.state} | botão: ${btn}`);
+      const img = activity.assets && activity.assets.large_image ? activity.assets.large_image : '';
+      log(`RPC: ${activity.details} | ${activity.state} | botão: ${btn} | img: ${img.slice(0, 70)}`);
     }
   }
   const payload = {
@@ -291,6 +292,14 @@ function formatTime(ms) {
   return h > 0 ? `${h}:${mm}:${ss}` : `${mm}:${ss}`;
 }
 
+function squareThumbUrl(url) {
+  if (!config.squareThumb || typeof url !== 'string') return url;
+  if (/^https:\/\/(i\.ytimg\.com|img\.youtube\.com)\//.test(url)) {
+    return `https://images.weserv.nl/?url=${encodeURIComponent(url)}&w=640&h=640&fit=contain&bg=000000`;
+  }
+  return url;
+}
+
 function buildActivity() {
   if (!state.active || !state.title) return null;
 
@@ -322,7 +331,7 @@ function buildActivity() {
     state: truncate(stateLine, 128),
     timestamps,
     assets: {
-      large_image: state.thumbnailUrl || '',
+      large_image: squareThumbUrl(state.thumbnailUrl || ''),
       large_text: truncate(state.title, 128),
     },
     buttons: [
@@ -406,6 +415,7 @@ function status() {
           durationMs: state.durationMs,
           paused: state.paused,
           videoId: state.videoId,
+          thumbnailUrl: state.thumbnailUrl,
         }
       : null,
   };

@@ -2,7 +2,7 @@
 
 ![Node](https://img.shields.io/badge/Node.js-%3E%3D18-339933?logo=node.js&logoColor=white)
 ![Dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)
-![Tests](https://img.shields.io/badge/tests-42%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-43%20passing-brightgreen)
 ![Discord](https://img.shields.io/badge/Discord-Rich%20Presence-5865F2?logo=discord&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
@@ -34,7 +34,7 @@ While you watch a video, your status looks like this:
 ## Features
 
 - ⏱️ **Real-time timestamp** with progress bar (playing / paused / live)
-- 🖼️ **Video thumbnail** as the RPC large image
+- 🖼️ **Video thumbnail** as the RPC large image, inside a **square frame** (letterbox) — Discord crops non-square images, so the thumb is embedded in a 640×640 square to show it whole
 - 🔘 **"Watch on YouTube" button** that opens the video at the current second
 - 🧊 Freezes progress on pause, tab switch or during ads
 - 🧹 Clears the RPC automatically when the last YouTube tab closes
@@ -169,10 +169,10 @@ Optional environment variables: `YT_RPC_PORT`, `YT_RPC_CONFIG`, `YT_RPC_LOG`.
 npm test
 ```
 
-The suite boots the real server against a **Discord mock** (dedicated pipe + own port, never touching your real Discord) and validates 42 cases: handshake, payload, states (playing/paused/live), truncation, input sanitization, HTTP robustness, timeouts and reconnection.
+The suite boots the real server against a **Discord mock** (dedicated pipe + own port, never touching your real Discord) and validates 43 cases: handshake, payload, states (playing/paused/live), truncation, input sanitization, HTTP robustness, timeouts and reconnection.
 
 ```
-RESULTADO: 42 passaram, 0 falharam
+RESULTADO: 43 passaram, 0 falharam
 ```
 
 ---
@@ -182,7 +182,7 @@ RESULTADO: 42 passaram, 0 falharam
 | command | what it does |
 |---------|--------------|
 | `npm start` | starts the server |
-| `npm test` | runs the 42 integration tests |
+| `npm test` | runs the 43 integration tests |
 | `npm run icons` | regenerates the extension icons (PNG) |
 | `npm run diag -- <clientId>` | named pipe diagnostics against real Discord |
 | `node tools/test-pipe.js` | manual Discord mock to inspect the protocol |
@@ -203,7 +203,7 @@ wytch-rpc/
 │   ├── config.example.json
 │   └── config.json     (git-ignored — your personal clientId)
 ├── tools/
-│   ├── run-tests.js    42 integration tests
+│   ├── run-tests.js    43 integration tests
 │   ├── test-pipe.js    Discord mock
 │   ├── diag-pipe.js    Real-pipe diagnostics
 │   └── generate-icons.js

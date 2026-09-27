@@ -449,6 +449,7 @@ const server = http.createServer((req, res) => {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ ok: true, discordConnected: discord.ready }));
       } catch (e) {
+        log('ERRO no /update: ' + (e && e.stack ? e.stack : e));
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ ok: false, error: 'json inválido' }));
       }

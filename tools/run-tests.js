@@ -61,7 +61,11 @@ function request(method, urlPath, body, headers) {
 }
 
 const get = (p) => request('GET', p);
-const post = (p, body, headers) => request('POST', p, body, headers);
+const post = async (p, body, headers) => {
+  const r = await request('POST', p, body, headers);
+  await sleep(150);
+  return r;
+};
 
 // ---------------------------------------------------------------------------
 // Mock Discord (pipe server)
@@ -200,7 +204,8 @@ async function main() {
       positionMs: 83000,
       durationMs: 212000,
       paused: false,
-      thumbnailUrl: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
+      thumbnailUrl:
+        'https://images.weserv.nl/?url=https%3A%2F%2Fi.ytimg.com%2Fvi%2FdQw4w9WgXcQ%2Fmaxresdefault.jpg&w=640&h=640&fit=contain&bg=000000',
     };
     const r1 = await post('/update', playing);
     ok('update aceito enquanto desconectado', r1.status === 200 && r1.json.ok === true, r1.raw);
@@ -241,6 +246,7 @@ async function main() {
       a && a.args.activity.buttons
     );
     ok('thumbnail como large_image', a.args.activity.assets.large_image.includes('i.ytimg.com'));
+    ok('thumbnail usa proxy quadrado (letterbox)', a.args.activity.assets.large_image.includes('images.weserv.nl'), a.args.activity.assets.large_image);
     ok('activity.name = YouTube', a.args.activity.name === 'YouTube');
 
     console.log('== Fase 2: estados ==');

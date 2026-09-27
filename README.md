@@ -2,7 +2,7 @@
 
 ![Node](https://img.shields.io/badge/Node.js-%3E%3D18-339933?logo=node.js&logoColor=white)
 ![Dependências](https://img.shields.io/badge/depend%C3%AAncias-0-brightgreen)
-![Testes](https://img.shields.io/badge/testes-42%20passando-brightgreen)
+![Testes](https://img.shields.io/badge/testes-43%20passando-brightgreen)
 ![Discord](https://img.shields.io/badge/Discord-Rich%20Presence-5865F2?logo=discord&logoColor=white)
 ![Licença](https://img.shields.io/badge/licen%C3%A7a-MIT-blue)
 
@@ -34,7 +34,7 @@ Quando você assiste a um vídeo, seu status fica assim:
 ## Funcionalidades
 
 - ⏱️ **Timestamp em tempo real** com barra de progresso (tocando / pausado / live)
-- 🖼️ **Thumbnail do vídeo** como imagem grande do RPC
+- 🖼️ **Thumbnail do vídeo** como imagem grande do RPC, em **moldura quadrada** (letterbox) — o Discord corta imagens não-quadradas, então a thumb é embutida em um quadrado 640×640 para aparecer inteira
 - 🔘 **Botão "Assistir no YouTube"** que abre o vídeo exatamente no segundo atual
 - 🧊 Congela o progresso ao pausar, trocar de aba ou durante anúncios
 - 🧹 Limpa o RPC automaticamente quando a última aba de YouTube é fechada
@@ -168,10 +168,10 @@ Variáveis de ambiente opcionais: `YT_RPC_PORT`, `YT_RPC_CONFIG`, `YT_RPC_LOG`.
 npm test
 ```
 
-A suíte inicia o servidor real contra um **mock do Discord** (pipe dedicado + porta própria, sem tocar no Discord real) e valida 42 casos: handshake, payload, estados (tocando/pausado/live), truncamento, sanitização de entrada, robustez HTTP, timeouts e reconexão.
+A suíte inicia o servidor real contra um **mock do Discord** (pipe dedicado + porta própria, sem tocar no Discord real) e valida 43 casos: handshake, payload, estados (tocando/pausado/live), truncamento, sanitização de entrada, robustez HTTP, timeouts e reconexão.
 
 ```
-RESULTADO: 42 passaram, 0 falharam
+RESULTADO: 43 passaram, 0 falharam
 ```
 
 ---
@@ -181,7 +181,7 @@ RESULTADO: 42 passaram, 0 falharam
 | comando | o que faz |
 |---------|-----------|
 | `npm start` | inicia o servidor |
-| `npm test` | roda os 42 testes de integração |
+| `npm test` | roda os 43 testes de integração |
 | `npm run icons` | regenera os ícones da extensão (PNG) |
 | `npm run diag -- <clientId>` | diagnóstico do named pipe contra o Discord real |
 | `node tools/test-pipe.js` | mock manual do Discord para inspecionar o protocolo |
@@ -202,7 +202,7 @@ wytch-rpc/
 │   ├── config.example.json
 │   └── config.json     (ignorado pelo git — seu clientId pessoal)
 ├── tools/
-│   ├── run-tests.js    Suíte de 42 testes de integração
+│   ├── run-tests.js    Suíte de 43 testes de integração
 │   ├── test-pipe.js    Mock do Discord
 │   ├── diag-pipe.js    Diagnóstico do pipe real
 │   └── generate-icons.js

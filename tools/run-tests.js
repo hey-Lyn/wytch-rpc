@@ -244,6 +244,7 @@ async function main() {
         a.args.activity.buttons[0].url === 'https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=83',
       a && a.args.activity.buttons
     );
+    ok('botão se chama "Assistir"', a.args.activity.buttons && a.args.activity.buttons[0].label === 'Assistir', a && a.args.activity.buttons);
     ok('thumbnail como large_image', a.args.activity.assets.large_image.includes('i.ytimg.com'));
     ok('thumbnail usa proxy quadrado (zoom cover)', a.args.activity.assets.large_image.includes('images.weserv.nl') && a.args.activity.assets.large_image.includes('fit=cover'), a.args.activity.assets.large_image);
     ok('thumbnail quadrada aponta o vídeo certo', a.args.activity.assets.large_image.includes('dQw4w9WgXcQ'), a.args.activity.assets.large_image);

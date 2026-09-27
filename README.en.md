@@ -21,7 +21,7 @@ While you watch a video, your status looks like this:
    Channel · Video title
    ▶ 03:21 / 10:45 · by @hey-Lyn
 
-   [Watch on YouTube]     ← opens the video at the exact timestamp
+   [Assistir]            ← opens the video at the exact timestamp
 ```
 
 - **Paused** (or switched tabs)? The progress freezes (`❚❚ 03:21 / 10:45`).
@@ -35,7 +35,7 @@ While you watch a video, your status looks like this:
 
 - ⏱️ **Real-time timestamp** with progress bar (playing / paused / live)
 - 🖼️ **Video thumbnail** as the RPC large image in a **square frame** — Discord requires a square image; the server generates it via `images.weserv.nl` (default: zoom-fill the square, no borders; or `contain` with a background)
-- 🔘 **"Watch on YouTube" button** that opens the video at the current second
+- 🔘 **"Assistir" button** that opens the video at the current second
 - 🧊 Freezes progress on pause, tab switch or during ads
 - 🧹 Clears the RPC automatically when the last YouTube tab closes
 - 🔁 Auto-reconnect: if Discord restarts or the app closes, the server recovers by itself

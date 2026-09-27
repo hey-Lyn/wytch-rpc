@@ -345,7 +345,7 @@ function buildActivity() {
     },
     buttons: [
       {
-        label: 'Assistir no YouTube',
+        label: 'Assistir',
         url: `https://www.youtube.com/watch?v=${state.videoId}&t=${positionSec}`,
       },
     ],

@@ -21,7 +21,7 @@ Quando você assiste a um vídeo, seu status fica assim:
    Canal · Título do vídeo
    ▶ 03:21 / 10:45 · by @hey-Lyn
 
-   [Assistir no YouTube]   ← abre o vídeo na timestamp exata
+   [Assistir]            ← abre o vídeo na timestamp exata
 ```
 
 - **Pausou** (ou trocou de aba)? O progresso congela (`❚❚ 03:21 / 10:45`).
@@ -35,7 +35,7 @@ Quando você assiste a um vídeo, seu status fica assim:
 
 - ⏱️ **Timestamp em tempo real** com barra de progresso (tocando / pausado / live)
 - 🖼️ **Thumbnail do vídeo** como imagem grande do RPC em **moldura quadrada** — o Discord exige imagem quadrada; o servidor gera via `images.weserv.nl` (padrão: zoom preenchendo o quadrado, sem bordas; ou `contain` com fundo)
-- 🔘 **Botão "Assistir no YouTube"** que abre o vídeo exatamente no segundo atual
+- 🔘 **Botão "Assistir"** que abre o vídeo exatamente no segundo atual
 - 🧊 Congela o progresso ao pausar, trocar de aba ou durante anúncios
 - 🧹 Limpa o RPC automaticamente quando a última aba de YouTube é fechada
 - 🔁 Reconexão automática: se o Discord cair ou o app for reiniciado, o servidor se recupera sozinho

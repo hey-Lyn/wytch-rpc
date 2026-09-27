@@ -339,6 +339,25 @@ async function main() {
     ok('reconecta sozinho após Discord voltar', ready);
     ok('último payload é reenviado após reconectar', lastSetActivity() !== null);
 
+    console.log('== Fase 7: configuração via API ==');
+    st = await get('/');
+    ok('GET / expõe config', st.json.config && st.json.config.clientId === 'TEST_CLIENT_ID_999', st.json.config);
+    let rc = await post('/config', { credit: 'by @test' });
+    ok('POST /config atualiza credit', rc.status === 200 && rc.json.ok === true && rc.json.config.credit === 'by @test', rc.raw);
+    const cfg = JSON.parse(fs.readFileSync(TEST_CONFIG, 'utf8'));
+    ok('POST /config persiste em disco', cfg.credit === 'by @test', cfg);
+
+    await post('/update', playing);
+    await post('/config', { thumbFit: 'contain' });
+    const la = lastSetActivity();
+    ok(
+      'POST /config reaplica activity (contain)',
+      la && la.args.activity && la.args.activity.assets.large_image.includes('fit=contain'),
+      la && la.args.activity && la.args.activity.assets.large_image
+    );
+    rc = await post('/config', '{invalido');
+    ok('POST /config JSON inválido → 400', rc.status === 400, rc.status);
+
     console.log('\n==========================');
     console.log(`RESULTADO: ${passed} passaram, ${failed} falharam`);
     console.log('==========================');

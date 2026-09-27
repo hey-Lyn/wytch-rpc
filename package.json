@@ -1,13 +1,15 @@
 {
   "name": "wytch-rpc",
   "version": "1.0.0",
-  "description": "Discord Rich Presence para o YouTube. Extensão + servidor local, protocolo IPC puro, zero dependências.",
+  "description": "Discord Rich Presence para o YouTube. Extensão + servidor local, protocolo IPC puro, zero dependências em runtime.",
   "private": true,
+  "bin": "server/server.js",
   "scripts": {
     "start": "node server/server.js",
     "test": "node tools/run-tests.js",
     "icons": "node tools/generate-icons.js",
-    "diag": "node tools/diag-pipe.js"
+    "diag": "node tools/diag-pipe.js",
+    "build:exe": "pkg server/server.js --targets node22-win-x64 --output dist/wytch-rpc.exe"
   },
   "engines": {
     "node": ">=18"
@@ -20,5 +22,8 @@
     "ipc",
     "nodejs"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@yao-pkg/pkg": "^6.22.0"
+  }
 }

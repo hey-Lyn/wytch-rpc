@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<style>
+  :root { color-scheme: dark; }
+  body { width: 300px; margin: 0; padding: 14px; font: 13px/1.5 system-ui, Segoe UI, sans-serif; background: #1e1f22; color: #e6e6e6; }
+  h1 { font-size: 15px; margin: 0; }
+  .sub { color: #9aa0a6; font-size: 11px; margin: 2px 0 10px; }
+  label { display: block; margin: 12px 0 4px; font-size: 12px; color: #c9ccd1; }
+  label span { color: #9aa0a6; }
+  input, select { width: 100%; box-sizing: border-box; padding: 8px; border-radius: 6px; border: 1px solid #3a3c42; background: #2b2d31; color: #e6e6e6; font-size: 12px; }
+  button { width: 100%; margin-top: 16px; padding: 10px; border: 0; border-radius: 6px; background: #5865F2; color: #fff; font-weight: 600; font-size: 13px; cursor: pointer; }
+  button:hover { background: #4752c4; }
+  .pill { display: inline-block; padding: 1px 9px; border-radius: 999px; font-size: 11px; }
+  .on { background: #1e4620; color: #57f287; }
+  .off { background: #4a1f22; color: #ed4245; }
+  #msg { font-size: 12px; margin-top: 10px; min-height: 16px; color: #57f287; }
+  .err { color: #ed4245 !important; }
+</style>
+</head>
+<body>
+  <h1>Wytch RPC</h1>
+  <div class="sub">Rich Presence do YouTube no Discord</div>
+  <div>Servidor: <span id="status" class="pill off">verificando…</span></div>
+
+  <label>Application ID <span>— opcional</span></label>
+  <input id="clientId" placeholder="deixe em branco para usar o padrão" spellcheck="false" autocomplete="off">
+
+  <label>Crédito</label>
+  <input id="credit" placeholder="ex.: by @seunick" autocomplete="off">
+
+  <label>Thumbnail</label>
+  <select id="thumbFit">
+    <option value="cover">Preencher o quadrado (zoom)</option>
+    <option value="contain">Inteira, com fundo</option>
+  </select>
+
+  <button id="save">Salvar</button>
+  <div id="msg"></div>
+  <script src="options.js"></script>
+</body>
+</html>

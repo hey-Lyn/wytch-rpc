@@ -5,22 +5,29 @@ const net = require('net');
 const fs = require('fs');
 const path = require('path');
 
+const IS_PACKAGED = !!process.pkg;
+const BASE_DIR = IS_PACKAGED ? path.dirname(process.execPath) : __dirname;
+
 const SERVER_PORT = parseInt(process.env.YT_RPC_PORT, 10) || 4444;
 const CONFIG_FILE = process.env.YT_RPC_CONFIG
   ? path.resolve(process.env.YT_RPC_CONFIG)
-  : path.join(__dirname, 'config.json');
-const EXAMPLE_FILE = path.join(__dirname, 'config.example.json');
+  : path.join(BASE_DIR, 'config.json');
 const LOG_FILE = process.env.YT_RPC_LOG
   ? path.resolve(process.env.YT_RPC_LOG)
-  : path.join(__dirname, 'server.log');
+  : path.join(BASE_DIR, 'server.log');
 const HEARTBEAT_MS = 30000;
 const CONNECT_TIMEOUT_MS = 3000;
 const RETRY_MS = 5000;
 const PLAYING_TIMEOUT_MS = 5000;
 const CLEAR_TIMEOUT_MS = 15000;
 
+// Application ID padrão (app "Wytch"). Rich Presence não exige login,
+// então qualquer Application ID válido funciona — assim quem usa não
+// precisa criar um app no portal do Discord.
+const DEFAULT_CLIENT_ID = '1520940765423865886';
+
 let config = {
-  clientId: '',
+  clientId: DEFAULT_CLIENT_ID,
   activityName: 'YouTube',
   credit: '',
   squareThumb: true,
@@ -39,10 +46,18 @@ function log(msg) {
   }
 }
 
+function saveConfig() {
+  try {
+    fs.writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2) + '\n');
+  } catch (e) {
+    log('Não foi possível salvar config.json (' + e.message + ')');
+  }
+}
+
 function loadConfig() {
-  if (!fs.existsSync(CONFIG_FILE) && fs.existsSync(EXAMPLE_FILE)) {
-    fs.copyFileSync(EXAMPLE_FILE, CONFIG_FILE);
-    log('config.json criado a partir de config.example.json — preencha o "clientId"!');
+  if (!fs.existsSync(CONFIG_FILE)) {
+    saveConfig();
+    if (!IS_PACKAGED) log('config.json criado com os valores padrão');
   }
   if (fs.existsSync(CONFIG_FILE)) {
     try {
@@ -53,8 +68,39 @@ function loadConfig() {
     }
   }
   if (!config.clientId) {
-    log('ATENÇÃO: "clientId" não configurado. Crie um app em discord.com/developers e coloque o Application ID em server/config.json');
+    log('ATENÇÃO: "clientId" não configurado (veja o README).');
   }
+}
+
+function applyConfig(patch) {
+  if (!patch || typeof patch !== 'object') return;
+  const before = config.clientId;
+  if (typeof patch.clientId === 'string') {
+    config.clientId = patch.clientId.trim().slice(0, 64) || DEFAULT_CLIENT_ID;
+  }
+  if (typeof patch.activityName === 'string') config.activityName = toStr(patch.activityName, 128) || 'YouTube';
+  if (typeof patch.credit === 'string') config.credit = toStr(patch.credit, 128);
+  if (typeof patch.squareThumb === 'boolean') config.squareThumb = patch.squareThumb;
+  if (patch.thumbFit === 'cover' || patch.thumbFit === 'contain') config.thumbFit = patch.thumbFit;
+  if (typeof patch.thumbBg === 'string' && /^[0-9a-fA-F]{6}$/.test(patch.thumbBg)) config.thumbBg = patch.thumbBg;
+  saveConfig();
+  log('Configuração atualizada via extensão');
+  if (config.clientId !== before) {
+    if (discord.socket) discord.socket.destroy();
+    discord.ready = false;
+  }
+  setActivity(buildActivity());
+}
+
+function publicConfig() {
+  return {
+    clientId: config.clientId,
+    activityName: config.activityName,
+    credit: config.credit,
+    squareThumb: config.squareThumb,
+    thumbFit: config.thumbFit,
+    thumbBg: config.thumbBg,
+  };
 }
 
 const state = {
@@ -416,6 +462,7 @@ function status() {
     uptimeSec: Math.floor(process.uptime()),
     discordConnected: discord.ready,
     discordClientId: config.clientId ? 'configurado' : 'AUSENTE',
+    config: publicConfig(),
     current: state.active
       ? {
           title: state.title,
@@ -481,6 +528,26 @@ const server = http.createServer((req, res) => {
     handleUpdate({ active: false });
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ ok: true }));
+    return;
+  }
+
+  if (req.method === 'POST' && req.url === '/config') {
+    let body = '';
+    req.on('data', (c) => {
+      body += c;
+      if (body.length > 20000) req.removeAllListeners('data');
+    });
+    req.on('end', () => {
+      try {
+        applyConfig(JSON.parse(body || '{}'));
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ ok: true, config: publicConfig() }));
+      } catch (e) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ ok: false, error: 'json inválido' }));
+      }
+    });
+    req.on('error', () => {});
     return;
   }
 

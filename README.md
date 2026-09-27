@@ -1,14 +1,30 @@
 # Wytch RPC
 
 ![Node](https://img.shields.io/badge/Node.js-%3E%3D18-339933?logo=node.js&logoColor=white)
-![Dependências](https://img.shields.io/badge/depend%C3%AAncias-0-brightgreen)
-![Testes](https://img.shields.io/badge/testes-43%20passando-brightgreen)
+![Dependências](https://img.shields.io/badge/runtime-0%20depend%C3%AAncias-brightgreen)
+![Testes](https://img.shields.io/badge/testes-50%20passando-brightgreen)
 ![Discord](https://img.shields.io/badge/Discord-Rich%20Presence-5865F2?logo=discord&logoColor=white)
 ![Licença](https://img.shields.io/badge/licen%C3%A7a-MIT-blue)
 
 > Mostra no seu status do Discord **o que você está assistindo no YouTube**: título, canal, timestamp com barra de progresso, thumbnail e um botão para assistir na hora exata. Tudo isso conversando com o Discord pelo **protocolo IPC puro**, sem bibliotecas externas.
 
 [English version 🇺🇸](README.en.md)
+
+---
+
+## Instalação rápida (Windows) 🚀
+
+Não quer mexer com código? Baixe o executável pronto:
+
+1. **Baixe** o `wytch-rpc-win-x64.zip` na página de [**Releases**](https://github.com/hey-Lyn/wytch-rpc/releases) e extraia a pasta.
+2. **Inicie o programa**: dê um duplo clique em `iniciar.bat`.
+   - Quer que ele inicie junto com o Windows (sem janela)? Rode uma vez `instalar-autostart.bat`.
+3. **Instale a extensão**: abra `vivaldi://extensions` (ou `chrome://extensions` / `edge://extensions`) → ative o **Modo do desenvolvedor** → **Carregar sem compactação** → selecione a pasta `extension`.
+4. Abra um vídeo no YouTube. Pronto! 🎉
+
+> **Não precisa criar app no Discord** — já vem com um Application ID padrão. Para personalizar (crédito, formato da thumbnail ou seu próprio ID), clique no **ícone do Wytch RPC** na barra do navegador.
+
+**Requisitos:** Discord desktop aberto e logado (o aplicativo, não o navegador).
 
 ---
 
@@ -19,7 +35,7 @@ Quando você assiste a um vídeo, seu status fica assim:
 ```
 ▶ Assistindo ao YouTube
    Canal · Título do vídeo
-   ▶ 03:21 / 10:45 · by @hey-Lyn
+   ▶ 03:21 / 10:45 · by @seunick
 
    [Assistir]            ← abre o vídeo na timestamp exata
 ```
@@ -34,14 +50,15 @@ Quando você assiste a um vídeo, seu status fica assim:
 ## Funcionalidades
 
 - ⏱️ **Timestamp em tempo real** com barra de progresso (tocando / pausado / live)
-- 🖼️ **Thumbnail do vídeo** como imagem grande do RPC em **moldura quadrada** — o Discord exige imagem quadrada; o servidor gera via `images.weserv.nl` (padrão: zoom preenchendo o quadrado, sem bordas; ou `contain` com fundo)
+- 🖼️ **Thumbnail do vídeo** como imagem grande do RPC em **moldura quadrada** — o Discord exige imagem quadrada; o servidor gera via `images.weserv.nl` (padrão: zoom preenchendo, sem bordas; ou `contain` com fundo)
 - 🔘 **Botão "Assistir"** que abre o vídeo exatamente no segundo atual
 - 🧊 Congela o progresso ao pausar, trocar de aba ou durante anúncios
 - 🧹 Limpa o RPC automaticamente quando a última aba de YouTube é fechada
-- 🔁 Reconexão automática: se o Discord cair ou o app for reiniciado, o servidor se recupera sozinho
+- 🔁 **Reconexão automática**: se o Discord cair ou reiniciar, o servidor se recupera sozinho
 - 🛡️ Entrada validada (anti-NaN, truncamento, limites de payload) — roda como se fosse produção
-- 🧪 Suíte de testes automatizada (42 testes) que valida o protocolo de ponta a ponta
-- 📦 **Zero dependências** — Node.js puro, sem `npm install`
+- 🧪 Suíte de testes automatizada (**50 testes**) que valida o protocolo de ponta a ponta
+- 🖱️ **Fácil de usar**: executável pronto (`wytch-rpc.exe`), scripts `iniciar.bat`/`parar.bat`, auto-start no Windows e **popup de configuração** na extensão
+- 📦 **Zero dependências em runtime** — Node.js puro (o `.exe` embute o runtime)
 - 🏷️ Crédito configurável (`by @seunick`)
 
 ---
@@ -49,19 +66,8 @@ Quando você assiste a um vídeo, seu status fica assim:
 ## Como funciona
 
 ```
-┌──────────────────────────┐      ┌──────────────────────────────┐
-│   Extensão (MV3)         │      │  Servidor local (Node.js)    │
-│   content.js             │      │  server.js                   │
-│   extrai do <video> e    │ HTTP │  valida, monta o activity e  │
-│   do DOM do YouTube      ├─────►│  envia pelo named pipe       │
-└──────────────────────────┘  POST│  http://127.0.0.1:4444/update└─────────────┬────────┐
-                                                                              │ IPC     │
-                                                                              ▼         │
-                                                                      ┌────────────────┐│
-                                                                      │ Discord        ││
-                                                                      │ \\.\pipe\      ││
-                                                                      │ discord-ipc-0  ││
-                                                                      └────────────────┘│
+Extensão (MV3) ──HTTP POST /update──► Servidor local (Node.js) ──IPC (named pipe)──► Discord
+  content.js                              server.js                        \\.\pipe\discord-ipc-{0..9}
 ```
 
 **Sem OAuth, sem tokens.** O Discord permite atualizar o Rich Presence de um app apenas enviando o `client_id` (Application ID) — é o mesmo mecanismo usado pelo PreMiD. Isso simplifica demais o projeto.
@@ -90,10 +96,10 @@ O activity é o objeto padrão do Discord (tipo `3` = Watching), com `timestamps
 {
   "type": 3,
   "details": "Canal · Título do vídeo",
-  "state": "▶ 03:21 / 10:45 · by @hey-Lyn",
+  "state": "▶ 03:21 / 10:45 · by @seunick",
   "timestamps": { "start": 1790000000 },
-  "assets": { "large_image": "https://i.ytimg.com/vi/<id>/maxresdefault.jpg" },
-  "buttons": [{ "label": "Assistir no YouTube", "url": "https://www.youtube.com/watch?v=<id>&t=201" }]
+  "assets": { "large_image": "https://images.weserv.nl/?url=...&w=640&h=640&fit=cover" },
+  "buttons": [{ "label": "Assistir", "url": "https://www.youtube.com/watch?v=<id>&t=201" }]
 }
 ```
 
@@ -101,61 +107,47 @@ O activity é o objeto padrão do Discord (tipo `3` = Watching), com `timestamps
 
 ## Requisitos
 
-- **Node.js 18+** (testado no v24)
 - **Discord desktop** (Windows, macOS ou Linux) rodando e logado
 - **Chrome / Edge / Vivaldi / Brave** (qualquer navegador Chromium) — a extensão usa Manifest V3
+- Para a **instalação manual**: **Node.js 18+** (testado no v24)
 
 ---
 
-## Instalação
-
-### 1. Crie o app no Discord
-
-1. Acesse [discord.com/developers/applications](https://discord.com/developers/applications) → **New Application**.
-2. Copie o **Application ID** (é o seu `client_id`).
-3. Em **Rich Presence**, ative *Rich Presence Asset* (opcional, para registrar imagens — a thumbnail do vídeo é enviada por URL e funciona sem isso).
-
-### 2. Configure o servidor
+## Instalação manual (Node.js / desenvolvedores)
 
 ```bash
 git clone https://github.com/hey-Lyn/wytch-rpc.git
 cd wytch-rpc
-cp server/config.example.json server/config.json
-# edite server/config.json e cole seu Application ID
-```
-
-```json
-{
-  "clientId": "SEU_APPLICATION_ID_AQUI",
-  "activityName": "YouTube",
-  "credit": "by @hey-Lyn"
-}
-```
-
-### 3. Inicie o servidor
-
-```bash
 npm start
 ```
 
-Você deve ver: `Servidor local ouvindo em http://127.0.0.1:4444` e `Conectado ao Discord (IPC READY)`.
+O `server/config.json` é criado automaticamente na primeira execução. Você deve ver:
 
-### 4. Instale a extensão
+```
+Servidor local ouvindo em http://127.0.0.1:4444
+Conectado ao Discord (IPC READY)
+```
 
-1. Abra `chrome://extensions` no seu navegador.
-2. Ative o **modo desenvolvedor** (canto superior direito).
-3. Clique em **Carregar sem compactação** e selecione a pasta `extension/`.
-4. Abra um vídeo no YouTube e veja seu status no Discord. 🎉
+Depois carregue a extensão: `chrome://extensions` → **Modo do desenvolvedor** → **Carregar sem compactação** → pasta `extension/`.
+
+Para gerar o executável standalone:
+
+```bash
+npm install          # instala o empacotador (só no build)
+npm run build:exe    # gera dist/wytch-rpc.exe
+```
 
 ---
 
-## Configuração (`server/config.json`)
+## Configuração
+
+A forma mais fácil é o **popup da extensão** (clique no ícone do Wytch RPC). As mudanças são salvas em `server/config.json` e aplicadas na hora.
 
 | campo | padrão | descrição |
 |-------|--------|-----------|
-| `clientId` | — | Application ID do seu app no Discord (obrigatório) |
+| `clientId` | *(padrão do projeto)* | Application ID do app no Discord. Só mude se você criou o seu. |
 | `activityName` | `"YouTube"` | Nome que aparece sob o status (é o nome do "jogo") |
-| `credit` | `""` | Texto extra no fim da linha de estado, ex.: `"by @hey-Lyn"` |
+| `credit` | `""` | Texto extra no fim da linha de estado, ex.: `"by @seunick"` |
 | `squareThumb` | `true` | Embuta a thumbnail num quadrado 640×640 (via `images.weserv.nl`) para o Discord não cortar |
 | `thumbFit` | `"cover"` | Como preenche o quadrado: `cover` (zoom, sem bordas) ou `contain` (vídeo inteiro + fundo) |
 | `thumbBg` | `"000000"` | Cor de fundo (hex) usada quando `thumbFit` é `contain` |
@@ -171,10 +163,10 @@ Variáveis de ambiente opcionais: `YT_RPC_PORT`, `YT_RPC_CONFIG`, `YT_RPC_LOG`.
 npm test
 ```
 
-A suíte inicia o servidor real contra um **mock do Discord** (pipe dedicado + porta própria, sem tocar no Discord real) e valida 43 casos: handshake, payload, estados (tocando/pausado/live), truncamento, sanitização de entrada, robustez HTTP, timeouts e reconexão.
+A suíte inicia o servidor real contra um **mock do Discord** (pipe dedicado + porta própria, sem tocar no Discord real) e valida 50 casos: handshake, payload, estados (tocando/pausado/live), truncamento, sanitização de entrada, robustez HTTP, configuração, timeouts e reconexão.
 
 ```
-RESULTADO: 43 passaram, 0 falharam
+RESULTADO: 50 passaram, 0 falharam
 ```
 
 ---
@@ -184,7 +176,8 @@ RESULTADO: 43 passaram, 0 falharam
 | comando | o que faz |
 |---------|-----------|
 | `npm start` | inicia o servidor |
-| `npm test` | roda os 43 testes de integração |
+| `npm test` | roda os 50 testes de integração |
+| `npm run build:exe` | gera o executável standalone em `dist/` |
 | `npm run icons` | regenera os ícones da extensão (PNG) |
 | `npm run diag -- <clientId>` | diagnóstico do named pipe contra o Discord real |
 | `node tools/test-pipe.js` | mock manual do Discord para inspecionar o protocolo |
@@ -199,17 +192,19 @@ wytch-rpc/
 │   ├── manifest.json
 │   ├── content.js      Extrai vídeo, título, canal, timestamp, anúncio
 │   ├── background.js   Limpa o RPC quando a última aba fecha
+│   ├── options.html/js Popup de configuração (ícone da extensão)
 │   └── icons/          Ícones gerados
 ├── server/
 │   ├── server.js       Servidor HTTP + cliente IPC do Discord (zero deps)
 │   ├── config.example.json
-│   └── config.json     (ignorado pelo git — seu clientId pessoal)
+│   └── config.json     (ignorado pelo git — criado automaticamente)
 ├── tools/
-│   ├── run-tests.js    Suíte de 43 testes de integração
+│   ├── run-tests.js    Suíte de 50 testes de integração
 │   ├── test-pipe.js    Mock do Discord
 │   ├── diag-pipe.js    Diagnóstico do pipe real
 │   └── generate-icons.js
-├── package.json        Scripts (npm start / test / icons / diag)
+├── iniciar.bat / parar.bat / instalar-autostart.bat / wytch-rpc.vbs
+├── package.json        Scripts (start / test / build:exe / icons / diag)
 └── README.md
 ```
 
@@ -217,27 +212,27 @@ wytch-rpc/
 
 ## Roadmap / ideias
 
+- [x] Popup de configuração na extensão
+- [x] Servidor empacotado como binário único (`.exe`)
 - [ ] Suporte a Firefox (WebExtensions)
-- [ ] Configuração da extensão por popup (ligar/desligar, credit)
 - [ ] Detecção de Spotify no YouTube (vídeos de música) para usar o RPC do Spotify
-- [ ] Publicar o servidor como binário único (p.ex. `pkg`)
-- [ ] Lançar no Chrome Web Store
+- [ ] Lançar na Chrome Web Store
 
 ---
 
 ## Troubleshooting
 
 **O status não aparece**
-1. O servidor está rodando? `npm start` deve mostrar `Conectado ao Discord (IPC READY)`.
+1. O servidor está rodando? Abra http://127.0.0.1:4444/ — deve mostrar `"discordConnected": true`.
 2. Extensão carregada? Abra `chrome://extensions` e confira se está ativa.
-3. Botões do RPC só aparecem para **outros usuários** — você mesmo não vê o seu próprio botão.
-4. O nome que aparece no status é o nome do **app** do portal Discord (se criou com nome "Wytch", aparece "Watching Wytch").
+3. Botões do RPC só aparecem para **outros usuários** — você não vê o seu próprio botão.
+4. O nome no status é o nome do **app** do Discord (o padrão do projeto mostra "Wytch").
 
 **"porta 4444 já está em uso"**
-Já existe uma instância rodando. Encerre o processo anterior (`Stop-Process` no PID de `server/server.pid`).
+Já existe uma instância rodando. Rode `parar.bat` (ou encerre o processo anterior).
 
 **O progresso não anda / o RPC não atualiza**
-Veja `server/server.log` — ele registra cada mudança de RPC, conexões e erros.
+Veja o `server.log` (ao lado do `server.js` ou do `.exe`) — ele registra cada mudança de RPC, conexões e erros.
 
 ---
 
@@ -245,4 +240,4 @@ Veja `server/server.log` — ele registra cada mudança de RPC, conexões e erro
 
 [MIT](LICENSE) © 2026 [hey-Lyn](https://github.com/hey-Lyn)
 
-Feito do zero com Node.js puro, sem dependências, como projeto de portfólio.
+Feito do zero com Node.js puro, sem dependências em runtime, como projeto de portfólio.

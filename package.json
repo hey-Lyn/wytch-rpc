@@ -1,0 +1,24 @@
+{
+  "name": "wytch-rpc",
+  "version": "1.0.0",
+  "description": "Discord Rich Presence para o YouTube. Extensão + servidor local, protocolo IPC puro, zero dependências.",
+  "private": true,
+  "scripts": {
+    "start": "node server/server.js",
+    "test": "node tools/run-tests.js",
+    "icons": "node tools/generate-icons.js",
+    "diag": "node tools/diag-pipe.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "discord",
+    "rich-presence",
+    "youtube",
+    "chrome-extension",
+    "ipc",
+    "nodejs"
+  ],
+  "license": "MIT"
+}

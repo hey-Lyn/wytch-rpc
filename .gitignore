@@ -1,0 +1,17 @@
+# Dependências (este projeto não usa nenhuma, mas por precaução)
+node_modules/
+
+# Config local — contém seu Application ID pessoal
+server/config.json
+
+# Logs e estado de runtime
+server/server.log
+server/server.pid
+*.log
+*.jsonl
+*.pid
+
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini

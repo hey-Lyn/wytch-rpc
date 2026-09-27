@@ -245,7 +245,7 @@ async function main() {
       a && a.args.activity.buttons
     );
     ok('thumbnail como large_image', a.args.activity.assets.large_image.includes('i.ytimg.com'));
-    ok('thumbnail usa proxy quadrado (letterbox)', a.args.activity.assets.large_image.includes('images.weserv.nl'), a.args.activity.assets.large_image);
+    ok('thumbnail usa proxy quadrado (zoom cover)', a.args.activity.assets.large_image.includes('images.weserv.nl') && a.args.activity.assets.large_image.includes('fit=cover'), a.args.activity.assets.large_image);
     ok('thumbnail quadrada aponta o vídeo certo', a.args.activity.assets.large_image.includes('dQw4w9WgXcQ'), a.args.activity.assets.large_image);
     ok('activity.name = YouTube', a.args.activity.name === 'YouTube');
 

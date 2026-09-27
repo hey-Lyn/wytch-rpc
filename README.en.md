@@ -34,7 +34,7 @@ While you watch a video, your status looks like this:
 ## Features
 
 - ⏱️ **Real-time timestamp** with progress bar (playing / paused / live)
-- 🖼️ **Video thumbnail** as the RPC large image, inside a **square frame** (letterbox) — Discord crops non-square images, so the server embeds the thumb in a 640×640 square via `images.weserv.nl` to show it whole
+- 🖼️ **Video thumbnail** as the RPC large image in a **square frame** — Discord requires a square image; the server generates it via `images.weserv.nl` (default: zoom-fill the square, no borders; or `contain` with a background)
 - 🔘 **"Watch on YouTube" button** that opens the video at the current second
 - 🧊 Freezes progress on pause, tab switch or during ads
 - 🧹 Clears the RPC automatically when the last YouTube tab closes
@@ -157,7 +157,9 @@ You should see: `Servidor local ouvindo em http://127.0.0.1:4444` and `Conectado
 | `clientId` | — | Application ID of your Discord app (required) |
 | `activityName` | `"YouTube"` | Name shown under the status (the "game" name) |
 | `credit` | `""` | Extra text at the end of the state line, e.g. `"by @hey-Lyn"` |
-| `squareThumb` | `true` | Embeds the thumbnail in a 640×640 square (letterbox) so Discord doesn't crop the sides |
+| `squareThumb` | `true` | Embeds the thumbnail in a 640×640 square (via `images.weserv.nl`) so Discord doesn't crop it |
+| `thumbFit` | `"cover"` | How the square is filled: `cover` (zoom, no borders) or `contain` (whole video + background) |
+| `thumbBg` | `"000000"` | Background color (hex) used when `thumbFit` is `contain` |
 | `pipeIndex` | *(auto)* | Force a fixed pipe index `discord-ipc-N` (optional) |
 
 Optional environment variables: `YT_RPC_PORT`, `YT_RPC_CONFIG`, `YT_RPC_LOG`.

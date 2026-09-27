@@ -2,5 +2,7 @@
   "clientId": "",
   "activityName": "YouTube",
   "credit": "by @hey-Lyn",
-  "squareThumb": true
+  "squareThumb": true,
+  "thumbFit": "cover",
+  "thumbBg": "000000"
 }

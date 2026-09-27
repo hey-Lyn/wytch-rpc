@@ -19,7 +19,14 @@ const RETRY_MS = 5000;
 const PLAYING_TIMEOUT_MS = 5000;
 const CLEAR_TIMEOUT_MS = 15000;
 
-let config = { clientId: '', activityName: 'YouTube', credit: '', squareThumb: true };
+let config = {
+  clientId: '',
+  activityName: 'YouTube',
+  credit: '',
+  squareThumb: true,
+  thumbFit: 'cover',
+  thumbBg: '000000',
+};
 
 function log(msg) {
   const ts = new Date().toLocaleTimeString();
@@ -249,7 +256,7 @@ function setActivity(activity) {
       state.lastSig = sig;
       const btn = activity.buttons && activity.buttons[0] ? activity.buttons[0].url : '';
       const img = activity.assets && activity.assets.large_image ? activity.assets.large_image : '';
-      log(`RPC: ${activity.details} | ${activity.state} | botão: ${btn} | img: ${img.slice(0, 70)}`);
+      log(`RPC: ${activity.details} | ${activity.state} | botão: ${btn} | img: ${img.slice(0, 120)}`);
     }
   }
   const payload = {
@@ -295,7 +302,9 @@ function formatTime(ms) {
 function squareThumbUrl(url) {
   if (!config.squareThumb || typeof url !== 'string') return url;
   if (/^https:\/\/(i\.ytimg\.com|img\.youtube\.com)\//.test(url)) {
-    return `https://images.weserv.nl/?url=${encodeURIComponent(url)}&w=640&h=640&fit=contain&bg=000000`;
+    const fit = config.thumbFit === 'contain' ? 'contain' : 'cover';
+    const bg = /^[0-9a-fA-F]{6}$/.test(config.thumbBg || '') ? config.thumbBg : '000000';
+    return `https://images.weserv.nl/?url=${encodeURIComponent(url)}&w=640&h=640&fit=${fit}&bg=${bg}`;
   }
   return url;
 }

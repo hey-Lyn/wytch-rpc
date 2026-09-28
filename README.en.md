@@ -18,7 +18,7 @@ Don't want to touch any code? Grab the ready-made executable:
 
 1. **Download** `wytch-rpc-win-x64.zip` from the [**Releases**](https://github.com/hey-Lyn/wytch-rpc/releases) page and extract the folder.
 2. **Run the app**: double-click `wytch-rpc.vbs` (or `iniciar.bat`).
-   - It runs **hidden**, with an **icon in the system tray** (near the clock). Right-click the icon to **Open YouTube**, see **Status** or **Quit**.
+   - It runs **hidden**, with an **icon in the system tray** (near the clock). Right-click the icon for **Show terminal**, **Minimize**, **Open YouTube**, **Status** or **Cancel process**.
    - Want it to start with Windows? Run `instalar-autostart.bat` once.
 3. **Install the extension**: open `chrome://extensions` (or `vivaldi://extensions` / `edge://extensions`) → enable **Developer mode** → **Load unpacked** → select the `extension` folder.
 4. Open a YouTube video. Done! 🎉
@@ -59,7 +59,7 @@ While you watch a video, your status looks like this:
 - 🛡️ Validated input (anti-NaN, truncation, payload limits) — production-grade
 - 🧪 Automated test suite (**50 tests**) validating the protocol end-to-end
 - 🖱️ **Beginner-friendly**: ready-made executable (`wytch-rpc.exe`), `iniciar.bat`/`parar.bat` scripts, Windows auto-start and an extension **settings popup**
-- 🗂️ **Runs hidden** with an **icon in the system tray** — no always-open console window
+- 🗂️ **Runs hidden** with an **icon in the system tray** — show/minimize the terminal and cancel the process from the icon menu, no always-open console window
 - 📦 **Zero runtime dependencies** — pure Node.js (the `.exe` embeds the runtime)
 - 🏷️ Configurable credit (`by @yourhandle`)
 
@@ -233,7 +233,7 @@ wytch-rpc/
 4. The name in the status is your Discord **app** name (the project default shows "Wytch").
 
 **"porta 4444 já está em uso" (port already in use)**
-An instance is already running. Right-click the tray icon → **Quit** (or run `parar.bat`).
+An instance is already running. Right-click the tray icon → **Cancel process** (or run `parar.bat`).
 
 **Progress not updating**
 Check `server.log` (next to `server.js` or the `.exe`) — it logs every RPC change, connection and error.

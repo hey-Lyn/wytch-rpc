@@ -18,7 +18,7 @@ Não quer mexer com código? Baixe o executável pronto:
 
 1. **Baixe** o `wytch-rpc-win-x64.zip` na página de [**Releases**](https://github.com/hey-Lyn/wytch-rpc/releases) e extraia a pasta.
 2. **Inicie o programa**: dê um duplo clique em `wytch-rpc.vbs` (ou `iniciar.bat`).
-   - Ele abre **oculto**, com um **ícone na bandeja do sistema** (perto do relógio). Clique com o botão direito no ícone para **Abrir YouTube**, ver o **Status** ou **Sair**.
+   - Ele abre **oculto**, com um **ícone na bandeja do sistema** (perto do relógio). Clique com o botão direito no ícone para **Mostrar terminal**, **Minimizar**, **Abrir YouTube**, **Status** ou **Cancelar processo**.
    - Quer que ele inicie junto com o Windows? Rode uma vez `instalar-autostart.bat`.
 3. **Instale a extensão**: abra `vivaldi://extensions` (ou `chrome://extensions` / `edge://extensions`) → ative o **Modo do desenvolvedor** → **Carregar sem compactação** → selecione a pasta `extension`.
 4. Abra um vídeo no YouTube. Pronto! 🎉
@@ -59,7 +59,7 @@ Quando você assiste a um vídeo, seu status fica assim:
 - 🛡️ Entrada validada (anti-NaN, truncamento, limites de payload) — roda como se fosse produção
 - 🧪 Suíte de testes automatizada (**50 testes**) que valida o protocolo de ponta a ponta
 - 🖱️ **Fácil de usar**: executável pronto (`wytch-rpc.exe`), scripts `iniciar.bat`/`parar.bat`, auto-start no Windows e **popup de configuração** na extensão
-- 🗂️ **Roda oculto** com um **ícone na bandeja do sistema** (tray) — sem janela de console sempre aberta
+- 🗂️ **Roda oculto** com um **ícone na bandeja do sistema** — mostre/minimize o terminal e cancele o processo pelo menu do ícone, sem janela sempre aberta
 - 📦 **Zero dependências em runtime** — Node.js puro (o `.exe` embute o runtime)
 - 🏷️ Crédito configurável (`by @seunick`)
 
@@ -233,7 +233,7 @@ wytch-rpc/
 4. O nome no status é o nome do **app** do Discord (o padrão do projeto mostra "Wytch").
 
 **"porta 4444 já está em uso"**
-Já existe uma instância rodando. Clique com o botão direito no ícone da bandeja → **Sair** (ou rode `parar.bat`).
+Já existe uma instância rodando. Clique com o botão direito no ícone da bandeja → **Cancelar processo** (ou rode `parar.bat`).
 
 **O progresso não anda / o RPC não atualiza**
 Veja o `server.log` (ao lado do `server.js` ou do `.exe`) — ele registra cada mudança de RPC, conexões e erros.

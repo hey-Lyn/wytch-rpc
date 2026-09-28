@@ -1,6 +1,6 @@
 {
   "name": "wytch-rpc",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Discord Rich Presence para o YouTube. Extensão + servidor local, protocolo IPC puro, zero dependências em runtime.",
   "private": true,
   "bin": "server/server.js",

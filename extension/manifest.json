@@ -1,18 +1,26 @@
 {
   "manifest_version": 3,
   "name": "Wytch RPC",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Mostra no seu status do Discord o que você está assistindo no YouTube: título, canal, timestamp, thumbnail e botão para assistir na hora exata.",
   "author": "hey-Lyn",
-  "permissions": ["tabs"],
-  "host_permissions": ["http://127.0.0.1:4444/*"],
+  "permissions": [
+    "tabs"
+  ],
+  "host_permissions": [
+    "http://127.0.0.1:4444/*"
+  ],
   "background": {
     "service_worker": "background.js"
   },
   "content_scripts": [
     {
-      "matches": ["https://www.youtube.com/*"],
-      "js": ["content.js"],
+      "matches": [
+        "https://www.youtube.com/*"
+      ],
+      "js": [
+        "content.js"
+      ],
       "run_at": "document_idle"
     }
   ],

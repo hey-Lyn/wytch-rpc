@@ -1,33 +1,8 @@
 @echo off
-setlocal
 cd /d "%~dp0"
-title Wytch RPC
-
-set "EXE="
-if exist "%~dp0wytch-rpc.exe" set "EXE=%~dp0wytch-rpc.exe"
-if not defined EXE if exist "%~dp0dist\wytch-rpc.exe" set "EXE=%~dp0dist\wytch-rpc.exe"
-
-if defined EXE (
-  echo Iniciando Wytch RPC...
-  "%EXE%"
-  goto :end
-)
-
-where node >nul 2>nul
-if errorlevel 1 (
-  echo.
-  echo [!] wytch-rpc.exe nao encontrado e Node.js nao esta instalado.
-  echo     Baixe o wytch-rpc.exe em:
-  echo     https://github.com/hey-Lyn/wytch-rpc/releases
-  echo.
+if not exist "wytch-rpc.vbs" (
+  echo wytch-rpc.vbs nao encontrado nesta pasta.
   pause
-  goto :end
+  exit /b 1
 )
-
-echo Iniciando Wytch RPC ^(via Node^)...
-node "%~dp0server\server.js"
-
-:end
-echo.
-echo O Wytch RPC foi encerrado.
-pause
+start "" wscript.exe "%~dp0wytch-rpc.vbs"

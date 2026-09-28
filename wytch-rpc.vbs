@@ -1,13 +1,12 @@
 Option Explicit
-Dim fso, sh, dir, exe
+Dim fso, sh, dir, ps1
 Set fso = CreateObject("Scripting.FileSystemObject")
 Set sh = CreateObject("WScript.Shell")
 dir = fso.GetParentFolderName(WScript.ScriptFullName)
-exe = dir & "\wytch-rpc.exe"
-If Not fso.FileExists(exe) Then exe = dir & "\dist\wytch-rpc.exe"
-If Not fso.FileExists(exe) Then
-  MsgBox "wytch-rpc.exe nao encontrado. Rode iniciar.bat ou baixe das Releases.", 48, "Wytch RPC"
+ps1 = dir & "\tray.ps1"
+If Not fso.FileExists(ps1) Then
+  MsgBox "tray.ps1 nao encontrado nesta pasta.", 48, "Wytch RPC"
   WScript.Quit
 End If
-sh.CurrentDirectory = fso.GetParentFolderName(exe)
-sh.Run """" & exe & """", 0, False
+sh.CurrentDirectory = dir
+sh.Run "powershell -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File """ & ps1 & """", 0, False

@@ -37,7 +37,8 @@ let config = {
 
 function log(msg) {
   const ts = new Date().toLocaleTimeString();
-  const line = `[${ts}] ${msg}`;
+  const safe = String(msg).replace(/[\r\n\u2028\u2029]+/g, ' ');
+  const line = `[${ts}] ${safe}`;
   console.log(line);
   try {
     fs.appendFileSync(LOG_FILE, line + '\n');
@@ -391,8 +392,12 @@ function buildActivity() {
     },
     buttons: [
       {
-        label: 'Assistir',
+        label: 'Watch',
         url: `https://www.youtube.com/watch?v=${state.videoId}&t=${positionSec}`,
+      },
+      {
+        label: 'Get it',
+        url: 'https://github.com/hey-Lyn/wytch-rpc',
       },
     ],
   };
@@ -412,13 +417,16 @@ function handleUpdate(data) {
     return;
   }
 
-  const videoId = toStr(data.videoId, 32);
+  const videoId = toStr(data.videoId, 32).replace(/[^A-Za-z0-9_-]/g, '');
   const title = toStr(data.title, 300);
   const channel = toStr(data.channel, 300);
   const positionMs = Math.max(0, toNum(data.positionMs));
   const durationMs = Math.max(0, toNum(data.durationMs));
   const paused = !!data.paused;
-  const thumbnailUrl = toStr(data.thumbnailUrl, 512);
+  const rawThumb = toStr(data.thumbnailUrl, 512);
+  const thumbnailUrl = /^https:\/\/(i\.ytimg\.com|img\.youtube\.com)\//.test(rawThumb)
+    ? rawThumb
+    : '';
 
   if (!videoId || !title || !channel) {
     // metadados incompletos (página carregando) — mantém estado atual, não limpa
@@ -477,15 +485,74 @@ function status() {
   };
 }
 
-function setCors(res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Access-Control-Allow-Private-Network', 'true');
+const ALLOWED_ORIGINS = new Set([
+  'https://www.youtube.com',
+  'https://youtube.com',
+  'https://m.youtube.com',
+  'https://music.youtube.com',
+]);
+const ALLOWED_HOSTS = new Set(['127.0.0.1', 'localhost', '::1', '[::1]']);
+
+function normalizeHost(hostHeader) {
+  if (typeof hostHeader !== 'string') return '';
+  let h = hostHeader.trim().toLowerCase();
+  if (h.startsWith('[')) {
+    const end = h.indexOf(']');
+    if (end !== -1) h = h.slice(0, end + 1);
+  } else {
+    const colon = h.indexOf(':');
+    if (colon !== -1) h = h.slice(0, colon);
+  }
+  return h;
+}
+
+function isAllowedHost(req) {
+  return ALLOWED_HOSTS.has(normalizeHost(req.headers.host));
+}
+
+function isAllowedOrigin(origin) {
+  if (!origin) return true;
+  if (ALLOWED_ORIGINS.has(origin)) return true;
+  return /^(chrome|moz)-extension:\/\//.test(origin);
+}
+
+function setCors(req, res) {
+  const origin = req.headers.origin;
+  if (origin && isAllowedOrigin(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    if (String(req.headers['access-control-request-private-network']).toLowerCase() === 'true') {
+      res.setHeader('Access-Control-Allow-Private-Network', 'true');
+    }
+  }
+}
+
+const RATE_WINDOW_MS = 1000;
+const RATE_MAX = 30;
+let rateHits = [];
+
+function isRateLimited() {
+  const now = Date.now();
+  rateHits = rateHits.filter((t) => now - t < RATE_WINDOW_MS);
+  if (rateHits.length >= RATE_MAX) return true;
+  rateHits.push(now);
+  return false;
 }
 
 const server = http.createServer((req, res) => {
-  setCors(res);
+  if (!isAllowedHost(req)) {
+    res.writeHead(403, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ ok: false, error: 'host não permitido' }));
+    return;
+  }
+  if (req.headers.origin && !isAllowedOrigin(req.headers.origin)) {
+    res.writeHead(403, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ ok: false, error: 'origem não permitida' }));
+    return;
+  }
+  setCors(req, res);
 
   if (req.method === 'OPTIONS') {
     res.writeHead(204);
@@ -494,6 +561,11 @@ const server = http.createServer((req, res) => {
   }
 
   if (req.method === 'POST' && req.url === '/update') {
+    if (isRateLimited()) {
+      res.writeHead(429, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ ok: false, error: 'rate limit' }));
+      return;
+    }
     let body = '';
     let tooLarge = false;
     req.on('data', (c) => {
@@ -532,6 +604,11 @@ const server = http.createServer((req, res) => {
   }
 
   if (req.method === 'POST' && req.url === '/config') {
+    if (isRateLimited()) {
+      res.writeHead(429, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ ok: false, error: 'rate limit' }));
+      return;
+    }
     let body = '';
     req.on('data', (c) => {
       body += c;

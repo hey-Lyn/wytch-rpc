@@ -2,7 +2,7 @@
 
 ![Node](https://img.shields.io/badge/Node.js-%3E%3D18-339933?logo=node.js&logoColor=white)
 ![Dependencies](https://img.shields.io/badge/runtime-0%20dependencies-brightgreen)
-![Tests](https://img.shields.io/badge/tests-50%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-55%20passing-brightgreen)
 ![Discord](https://img.shields.io/badge/Discord-Rich%20Presence-5865F2?logo=discord&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
@@ -57,7 +57,7 @@ While you watch a video, your status looks like this:
 - 🧹 Clears the RPC automatically when the last YouTube tab closes
 - 🔁 **Auto-reconnect**: if Discord restarts or the app closes, the server recovers by itself
 - 🛡️ Validated input (anti-NaN, truncation, payload limits) — production-grade
-- 🧪 Automated test suite (**50 tests**) validating the protocol end-to-end
+- 🧪 Automated test suite (**55 tests**) validating the protocol end-to-end
 - 🖱️ **Beginner-friendly**: ready-made executable (`wytch-rpc.exe`), `iniciar.bat`/`parar.bat` scripts, Windows auto-start and an extension **settings popup**
 - 🗂️ **Runs hidden** with an **icon in the system tray** — show/minimize the terminal and cancel the process from the icon menu, no always-open console window
 - 📦 **Zero runtime dependencies** — pure Node.js (the `.exe` embeds the runtime)
@@ -159,16 +159,22 @@ Optional environment variables: `YT_RPC_PORT`, `YT_RPC_CONFIG`, `YT_RPC_LOG`.
 
 ---
 
+## Security
+
+The server listens only on `127.0.0.1` and validates the `Host` header (this blocks **DNS rebinding** attacks) and the `Origin`: only `https://www.youtube.com` (and variants) and `chrome-extension://`/`moz-extension://` may call the API. Requests without an `Origin` (local scripts, tests) are accepted. Thumbnails outside `i.ytimg.com`/`img.youtube.com` are dropped, the `videoId` is sanitized, `/update` and `/config` are rate-limited, and the log strips newlines. There is no auth token — that is why CORS is restricted by origin.
+
+---
+
 ## Tests
 
 ```bash
 npm test
 ```
 
-The suite boots the real server against a **Discord mock** (dedicated pipe + own port, never touching your real Discord) and validates 50 cases: handshake, payload, states (playing/paused/live), truncation, input sanitization, HTTP robustness, configuration, timeouts and reconnection.
+The suite boots the real server against a **Discord mock** (dedicated pipe + own port, never touching your real Discord) and validates 55 cases: handshake, payload, states (playing/paused/live), truncation, input sanitization, HTTP robustness, configuration, timeouts and reconnection.
 
 ```
-RESULTADO: 50 passaram, 0 falharam
+RESULTADO: 55 passaram, 0 falharam
 ```
 
 ---
@@ -178,7 +184,7 @@ RESULTADO: 50 passaram, 0 falharam
 | command | what it does |
 |---------|--------------|
 | `npm start` | starts the server |
-| `npm test` | runs the 50 integration tests |
+| `npm test` | runs the 55 integration tests |
 | `npm run build:exe` | builds the standalone executable into `dist/` |
 | `npm run icons` | regenerates the extension icons (PNG) |
 | `npm run diag -- <clientId>` | named pipe diagnostics against real Discord |
@@ -201,7 +207,7 @@ wytch-rpc/
 │   ├── config.example.json
 │   └── config.json     (git-ignored — auto-created)
 ├── tools/
-│   ├── run-tests.js    50 integration tests
+│   ├── run-tests.js    55 integration tests
 │   ├── test-pipe.js    Discord mock
 │   ├── diag-pipe.js    Real-pipe diagnostics
 │   └── generate-icons.js

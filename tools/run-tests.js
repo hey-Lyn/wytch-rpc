@@ -244,7 +244,14 @@ async function main() {
         a.args.activity.buttons[0].url === 'https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=83',
       a && a.args.activity.buttons
     );
-    ok('botão se chama "Assistir"', a.args.activity.buttons && a.args.activity.buttons[0].label === 'Assistir', a && a.args.activity.buttons);
+    ok('botão se chama "Watch"', a.args.activity.buttons && a.args.activity.buttons[0].label === 'Watch', a && a.args.activity.buttons);
+    ok(
+      'segundo botão leva ao repositório',
+      a.args.activity.buttons &&
+        a.args.activity.buttons[1] &&
+        a.args.activity.buttons[1].url === 'https://github.com/hey-Lyn/wytch-rpc',
+      a && a.args.activity.buttons
+    );
     ok('thumbnail como large_image', a.args.activity.assets.large_image.includes('i.ytimg.com'));
     ok('thumbnail usa proxy quadrado (zoom cover)', a.args.activity.assets.large_image.includes('images.weserv.nl') && a.args.activity.assets.large_image.includes('fit=cover'), a.args.activity.assets.large_image);
     ok('thumbnail quadrada aponta o vídeo certo', a.args.activity.assets.large_image.includes('dQw4w9WgXcQ'), a.args.activity.assets.large_image);
@@ -283,6 +290,18 @@ async function main() {
       b
     );
 
+    await post('/update', { ...playing, thumbnailUrl: 'https://evil.example/x.jpg' });
+    b = lastSetActivity().args.activity;
+    ok('thumbnail fora do YouTube é descartada', !b.assets.large_image.includes('evil'), b.assets.large_image);
+
+    await post('/update', { ...playing, videoId: 'a b&c#d/e' });
+    b = lastSetActivity().args.activity;
+    ok(
+      'videoId sanitizado no botão',
+      /^[A-Za-z0-9_-]+$/.test(new URL(b.buttons[0].url).searchParams.get('v')),
+      b.buttons[0].url
+    );
+
     await post('/update', { active: true, videoId: 'dQw4w9WgXcQ', channel: 'X', positionMs: 10 });
     ok('update sem título não derruba o servidor', true);
     st = await get('/');
@@ -298,8 +317,26 @@ async function main() {
 
     r = await request('OPTIONS', '/update', undefined);
     ok('preflight OPTIONS → 204', r.status === 204, r.status);
-    ok('CORS allow-origin', r.headers['access-control-allow-origin'] === '*', r.headers['access-control-allow-origin']);
+
+    const ytPreflight = {
+      Origin: 'https://www.youtube.com',
+      'Access-Control-Request-Method': 'POST',
+      'Access-Control-Request-Private-Network': 'true',
+    };
+    r = await request('OPTIONS', '/update', undefined, ytPreflight);
+    ok('preflight do YouTube → 204', r.status === 204, r.status);
+    ok(
+      'CORS reflete a origem permitida (não "*")',
+      r.headers['access-control-allow-origin'] === 'https://www.youtube.com',
+      r.headers['access-control-allow-origin']
+    );
     ok('CORS private network header', r.headers['access-control-allow-private-network'] === 'true', r.headers['access-control-allow-private-network']);
+
+    r = await request('POST', '/update', playing, { Origin: 'https://evil.example' });
+    ok('origem não permitida → 403', r.status === 403, r.status);
+
+    r = await request('POST', '/update', playing, { Host: 'evil.example' });
+    ok('host não permitido → 403', r.status === 403, r.status);
 
     r = await get('/nao-existe');
     ok('rota desconhecida → 404', r.status === 404, r.status);

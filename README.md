@@ -31,7 +31,7 @@ Quando você assiste a um vídeo, seu status fica assim:
    Canal · Título do vídeo
    ▶ 03:21 / 10:45 · by @seunick
 
-   [Assistir]            ← abre o vídeo na timestamp exata
+   [Watch]   [Get it]    ← abre o vídeo na timestamp exata / baixa o projeto
 ```
 
 - **Pausou** (ou trocou de aba), O progresso congela (`❚❚ 03:21 / 10:45`).
@@ -43,7 +43,8 @@ Quando você assiste a um vídeo, seu status fica assim:
 
 - ⏱️ **Timestamp em tempo real** com barra de progresso (tocando / pausado / live)
 - 🖼️ **Thumbnail do vídeo**
-- 🔘 **Botão "Assistir"** que abre o vídeo exatamente no segundo atual
+- 🔘 **Botão "Watch"** que abre o vídeo exatamente no segundo atual
+- 🔗 **Botão "Get it"** que leva ao repositório do projeto
 - 🧊 Congela o progresso ao pausar, trocar de aba ou durante anúncios
 - 🧹 Limpa o RPC automaticamente quando a última aba de YouTube é fechada
 - 🔁 **Reconexão automática**: se o Discord cair ou reiniciar, o servidor se recupera sozinho
@@ -82,10 +83,10 @@ npm run build:exe    # gera dist/wytch-rpc.exe
 npm test
 ```
 
-A suíte inicia o servidor real contra um **mock do Discord** (pipe dedicado + porta própria, sem tocar no Discord real) e valida 50 casos: handshake, payload, estados (tocando/pausado/live), truncamento, sanitização de entrada, robustez HTTP, configuração, timeouts e reconexão.
+A suíte inicia o servidor real contra um **mock do Discord** (pipe dedicado + porta própria, sem tocar no Discord real) e valida 55 casos: handshake, payload, estados (tocando/pausado/live), truncamento, sanitização de entrada, robustez HTTP, configuração, timeouts e reconexão.
 
 ```
-RESULTADO: 50 passaram, 0 falharam
+RESULTADO: 55 passaram, 0 falharam
 ```
 
 ---
@@ -95,7 +96,7 @@ RESULTADO: 50 passaram, 0 falharam
 | comando | o que faz |
 |---------|-----------|
 | `npm start` | inicia o servidor |
-| `npm test` | roda os 50 testes de integração |
+| `npm test` | roda os 55 testes de integração |
 | `npm run build:exe` | gera o executável standalone em `dist/` |
 | `npm run icons` | regenera os ícones da extensão (PNG) |
 | `npm run diag -- <clientId>` | diagnóstico do named pipe contra o Discord real |

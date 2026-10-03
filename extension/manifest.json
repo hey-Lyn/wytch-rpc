@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Wytch RPC",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Mostra no seu status do Discord o que você está assistindo no YouTube: título, canal, timestamp, thumbnail e botão para assistir na hora exata.",
   "author": "hey-Lyn",
   "permissions": [
